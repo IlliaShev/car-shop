@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car-shop
+  template:
+    metadata:
+      labels:
+        app: car-shop
+    spec:
+      containers:
+      - name: car-shop
+        image: shevchyk/micro-car-shop
+        env:
+          - name: car.service.url
+            value: http://car-service.default.svc.cluster.local:8081
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8082

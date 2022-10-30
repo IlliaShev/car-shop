@@ -1,8 +1,6 @@
 package ua.shevchyk.carservice.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ua.shevchyk.carservice.dto.CarDto;
 import ua.shevchyk.carservice.model.Car;
 import ua.shevchyk.carservice.repository.CarRepository;
@@ -12,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class CarService implements ICarService {
 
     private final CarRepository carRepository;

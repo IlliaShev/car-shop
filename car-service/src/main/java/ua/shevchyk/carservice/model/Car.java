@@ -1,22 +1,12 @@
 package ua.shevchyk.carservice.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "car")
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
 public class Car {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private static Long cnt = 0L;
+
     private Long id;
 
     private String brand;
@@ -25,9 +15,30 @@ public class Car {
     private double price;
 
     public Car(String brand, String model, int year, double price) {
+        this.id = cnt++;
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public double getPrice() {
+        return price;
     }
 }

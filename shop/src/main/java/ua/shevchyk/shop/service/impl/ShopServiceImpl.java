@@ -1,7 +1,6 @@
 package ua.shevchyk.shop.service.impl;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import ua.shevchyk.shop.model.CarPurchaseContract;
 import ua.shevchyk.shop.repository.CarPurchaseContractRepository;
 import ua.shevchyk.shop.service.api.IShopService;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -30,13 +28,13 @@ public class ShopServiceImpl implements IShopService {
         this.restTemplate = restTemplate;
     }
 
-    private static final String BASE_URL = "http://localhost:8081/api/v1";
+    @Value("${car.service.url}")
+    private String BASE_URL;
 
-    @Transactional(rollbackOn = CarPurchaseException.class)
     @Override
     public CarPurchaseContract purchaseCar(UserDto user) {
         Long carId = user.getCarId();
-        ResponseEntity<CarDto> responseCar = restTemplate.getForEntity(BASE_URL + "/cars/" + carId, CarDto.class);
+        ResponseEntity<CarDto> responseCar = restTemplate.getForEntity(BASE_URL + "/api/v1/cars/" + carId, CarDto.class);
         CarDto carDto = responseCar.getBody();
         if (!responseCar.getStatusCode().is2xxSuccessful() || Objects.isNull(carDto)) {
             throw new CarPurchaseException("Couldn`t get car with id " + carId);
@@ -52,7 +50,7 @@ public class ShopServiceImpl implements IShopService {
 
         CarPurchaseContract savedContract = contractRepository.save(carPurchaseContract);
 
-        ResponseEntity<Long> idOfDeletedCar = restTemplate.exchange(BASE_URL + "/cars/" + carId, HttpMethod.DELETE, null, Long.class);
+        ResponseEntity<Long> idOfDeletedCar = restTemplate.exchange(BASE_URL + "/api/v1/cars/" + carId, HttpMethod.DELETE, null, Long.class);
         if (!idOfDeletedCar.getStatusCode().is2xxSuccessful()) {
             throw new CarPurchaseException("Exception occurred while purchasing car with id " + carId);
         }
@@ -67,7 +65,7 @@ public class ShopServiceImpl implements IShopService {
 
     @Override
     public List<CarDto> getAllCars() {
-        ResponseEntity<CarDto[]> responseCars = restTemplate.getForEntity(BASE_URL + "/cars", CarDto[].class);
+        ResponseEntity<CarDto[]> responseCars = restTemplate.getForEntity(BASE_URL + "/api/v1/cars", CarDto[].class);
         if (!responseCars.getStatusCode().is2xxSuccessful()) {
             throw new InternalException("Couldn`t get cars from car-service");
         }
